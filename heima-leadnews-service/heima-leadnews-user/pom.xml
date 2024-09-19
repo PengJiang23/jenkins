@@ -46,12 +46,30 @@
             <plugin>
                 <groupId>io.fabric8</groupId>
                 <artifactId>docker-maven-plugin</artifactId>
-                <version>0.34.1</version>
+                <version>0.39.0</version>
                 <configuration>
-                    <repository>${docker.image}/${project.artifactId}</repository>
-                    <buildArgs>
-                        <JAR_FILE>target/${project.build.finalName}.jar</JAR_FILE>
-                    </buildArgs>
+
+                    <!-- 指定 Dockerfile 路径 -->
+                    <dockerFile>${project.basedir}/Dockerfile</dockerFile>
+
+                    <!-- 镜像名称，使用本地镜像 -->
+                    <images>
+                        <image>
+                            <name>${docker.image}/${project.artifactId}</name>
+                            <build>
+                                <!-- 从本地镜像仓库拉取基础镜像 -->
+                                <from>openjdk:8</from> <!-- 例如：my-local-image:latest -->
+                                <args>
+                                    <JAR_FILE>target/${project.build.finalName}.jar</JAR_FILE>
+                                </args>
+                            </build>
+                        </image>
+                    </images>
+
+
+                    <!-- 禁止从 Docker Hub 或远程仓库拉取 -->
+                    <skipPull>true</skipPull>
+
                 </configuration>
             </plugin>
         </plugins>
