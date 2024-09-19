@@ -60,6 +60,8 @@
                                 <args>
                                     <JAR_FILE>target/${project.build.finalName}.jar</JAR_FILE>
                                 </args>
+
+                                <noCache>true</noCache>
                             </build>
                         </image>
                     </images>
