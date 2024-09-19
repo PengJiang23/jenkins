@@ -15,4 +15,4 @@ ENV JAVA_OPTS="\
 #空参数，方便创建容器时传参
 ENV PARAMS=""
 # 入口点， 执行JAVA运行命令
-ENTRYPOINT ["sh","-c","java -jar $JAVA_OPTS /app.jar $PARAMS"]
+ENTRYPOINT java ${JAVA_OPTS}  -jar /app.jar
