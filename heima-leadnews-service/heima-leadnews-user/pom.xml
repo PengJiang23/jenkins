@@ -48,10 +48,8 @@
                 <artifactId>docker-maven-plugin</artifactId>
                 <version>0.39.0</version>
                 <configuration>
-
                     <!-- 指定 Dockerfile 路径 -->
                     <dockerFile>${project.basedir}/Dockerfile</dockerFile>
-
                     <!-- 镜像名称，使用本地镜像 -->
                     <images>
                         <image>
@@ -65,11 +63,8 @@
                             </build>
                         </image>
                     </images>
-
-
                     <!-- 禁止从 Docker Hub 或远程仓库拉取 -->
                     <skipPull>true</skipPull>
-
                 </configuration>
             </plugin>
         </plugins>
