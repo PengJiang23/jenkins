@@ -22,7 +22,7 @@
 
     <!--    build-->
     <build>
-        <finalName>heima-leadnews-user</finalName>
+        <finalName>heima-leadnews-app-gateway</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
