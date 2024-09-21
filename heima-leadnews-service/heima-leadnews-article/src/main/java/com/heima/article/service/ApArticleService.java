@@ -19,4 +19,5 @@ public interface ApArticleService extends IService<ApArticle> {
     ResponseResult load2(Short loadType, ArticleHomeDto dto, boolean  firstPage);
 
     void updateScore(ArticleVisitStreamMess articleVisitStreamMess);
+
 }
