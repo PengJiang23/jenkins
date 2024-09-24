@@ -89,6 +89,7 @@
         </dependency>
 
 
+
 <!--        ocr识别-->
         <dependency>
             <groupId>net.sourceforge.tess4j</groupId>

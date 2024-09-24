@@ -11,6 +11,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 
 @SpringBootApplication
@@ -19,6 +20,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableFeignClients(basePackages = "com.heima.apis")
 @EnableAsync
 @EnableScheduling
+//@EnableTransactionManagement
 public class WemediaApplication {
 
     public static void main(String[] args) {

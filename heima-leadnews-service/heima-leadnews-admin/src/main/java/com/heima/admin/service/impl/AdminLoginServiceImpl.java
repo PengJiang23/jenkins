@@ -20,6 +20,7 @@ import java.util.Map;
 
 @Service
 @Slf4j
+
 public class AdminLoginServiceImpl extends ServiceImpl<AdminLoginMapper, AdUser> implements AdminLoginService {
 
     @Autowired

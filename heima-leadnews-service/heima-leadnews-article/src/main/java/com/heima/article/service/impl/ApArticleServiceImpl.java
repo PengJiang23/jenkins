@@ -3,6 +3,9 @@ package com.heima.article.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.heima.article.mapper.ApArticleConfigMapper;
 import com.heima.article.mapper.ApArticleContentMapper;
@@ -12,6 +15,7 @@ import com.heima.article.service.ArticleFreemarkerService;
 import com.heima.common.constants.ArticleConstants;
 import com.heima.common.constants.BehaviorConstants;
 import com.heima.common.redis.CacheService;
+import com.heima.model.article.dtos.ArticleCommentDto;
 import com.heima.model.article.dtos.ArticleDto;
 import com.heima.model.article.dtos.ArticleHomeDto;
 import com.heima.model.article.dtos.ArticleInfoDto;
@@ -19,11 +23,16 @@ import com.heima.model.article.pojos.ApArticle;
 import com.heima.model.article.pojos.ApArticleConfig;
 import com.heima.model.article.pojos.ApArticleContent;
 import com.heima.model.article.vos.ArticleBehaviorVO;
+import com.heima.model.article.vos.ArticleCommnetVo;
 import com.heima.model.article.vos.HotArticleVo;
+import com.heima.model.comment.dtos.CommentConfigDto;
+import com.heima.model.common.dtos.PageResponseResult;
 import com.heima.model.common.dtos.ResponseResult;
 import com.heima.model.common.enums.AppHttpCodeEnum;
 import com.heima.model.mess.ArticleVisitStreamMess;
 import com.heima.model.user.pojos.ApUser;
+import com.heima.model.wemedia.dtos.StatisticsDto;
+import com.heima.utils.common.DateUtils;
 import com.heima.utils.thread.AppThreadLocalUtil;
 import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
@@ -303,6 +312,55 @@ public class ApArticleServiceImpl extends ServiceImpl<ApArticleMapper, ApArticle
     }
 
 
+    @Override
+    public PageResponseResult findNewsComments(ArticleCommentDto dto) {
+
+        // 查询分页数据，自定义实现，需要手动设置分页数和total之类的
+        Integer currentPage = dto.getPage();
+        dto.setPage((dto.getPage()-1)*dto.getSize());
 
 
+        // 获取所有文章评论详情
+        List<ArticleCommnetVo> list = apArticleMapper.findNewsComments(dto);
+        // 获取当前用户的所有文章的数量
+        int count = apArticleMapper.findNewsCommentsCount(dto);
+
+        PageResponseResult responseResult = new PageResponseResult(currentPage,dto.getSize(),count);
+        responseResult.setData(list);
+
+        return responseResult;
+    }
+
+
+    @Override
+    public PageResponseResult newPage(StatisticsDto dto) {
+        //类型转换
+        Date beginDate = DateUtils.stringToDate(dto.getBeginDate());
+        Date endDate = DateUtils.stringToDate(dto.getEndDate());
+        //检查参数
+        dto.checkParam();
+        //分页查询
+        IPage page = new Page(dto.getPage(), dto.getSize());
+        LambdaQueryWrapper<ApArticle> lambdaQueryWrapper = Wrappers.<ApArticle>lambdaQuery()
+                .eq(ApArticle::getAuthorId, dto.getWmUserId())
+                .between(ApArticle::getPublishTime,beginDate, endDate)
+                .select(ApArticle::getId,ApArticle::getTitle,ApArticle::getLikes,ApArticle::getCollection,ApArticle::getComment,ApArticle::getViews);
+
+        lambdaQueryWrapper.orderByDesc(ApArticle::getPublishTime);
+
+        page = page(page,lambdaQueryWrapper);
+
+        PageResponseResult responseResult = new PageResponseResult(dto.getPage(),dto.getSize(),(int)page.getTotal());
+        responseResult.setData(page.getRecords());
+        return responseResult;
+    }
+
+
+    @Override
+    public List<ApArticle> findAllArticle(Integer apUserId, Date beginDate1, Date endDate1) {
+        List<ApArticle> list = list(new LambdaQueryWrapper<ApArticle>().eq(ApArticle::getAuthorId, apUserId)
+                .between(ApArticle::getPublishTime,beginDate1,endDate1));
+
+        return list;
+    }
 }
